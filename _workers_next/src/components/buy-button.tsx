@@ -69,7 +69,10 @@ export function BuyButton({ productId, price, productName, disabled, quantity = 
             }
 
             if (result.isZeroPrice && result.url) {
+                // Close dialog before navigation to prevent React errors
+                setOpen(false)
                 toast.success(t('buy.paymentSuccessPoints'))
+                await new Promise(resolve => setTimeout(resolve, 50))
                 window.location.href = result.url
                 return
             }
@@ -83,6 +86,12 @@ export function BuyButton({ productId, price, productName, disabled, quantity = 
             }
 
             if (params) {
+                // Close dialog before navigation to prevent React errors on Safari
+                setOpen(false)
+                
+                // Small delay to let React finish before page navigation
+                await new Promise(resolve => setTimeout(resolve, 50))
+                
                 // Submit Form
                 const form = document.createElement('form')
                 form.method = 'POST'
@@ -98,6 +107,7 @@ export function BuyButton({ productId, price, productName, disabled, quantity = 
 
                 document.body.appendChild(form)
                 form.submit()
+                return // Don't update state after navigation
             }
 
         } catch (e: any) {
